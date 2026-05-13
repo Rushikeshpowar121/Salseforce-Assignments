@@ -1,0 +1,123 @@
+<apex:page controller="StudentController">
+
+    <apex:form>
+
+        <!-- Messages -->
+        <apex:pageMessages />
+
+        <!-- Student Form -->
+        <apex:pageBlock
+            title="Student Record Management System"
+            id="mainBlock">
+
+            <apex:pageBlockSection
+                title="Student Information"
+                columns="2">
+
+                <apex:inputField value="{!stu.Name}" />
+
+                <apex:inputField value="{!stu.Roll_No__c}" />
+
+                <apex:inputField value="{!stu.Class__c}" />
+
+                <apex:inputField value="{!stu.Mobile__c}" />
+
+                <apex:inputField value="{!stu.Email__c}" />
+
+            </apex:pageBlockSection>
+
+            <!-- Buttons -->
+            <apex:pageBlockButtons>
+
+                <!-- Save / Update -->
+                <apex:commandButton
+                    value="{!IF(isEdit,'Update Student','Save Student')}"
+                    action="{!saveStudent}"
+                    rerender="mainBlock,studentTable"
+                />
+
+                <!-- Cancel -->
+                <apex:commandButton
+                    value="Cancel"
+                    action="{!cancelEdit}"
+                    rendered="{!isEdit}"
+                    rerender="mainBlock"
+                />
+
+            </apex:pageBlockButtons>
+
+        </apex:pageBlock>
+
+        <!-- Student Table -->
+        <apex:pageBlock
+            title="Student Records"
+            id="studentTable">
+
+            <apex:pageBlockTable
+                value="{!studentList}"
+                var="s">
+
+                <!-- Columns -->
+                <apex:column
+                    value="{!s.Name}"
+                    headerValue="Student Name" />
+
+                <apex:column
+                    value="{!s.Roll_No__c}"
+                    headerValue="Roll No" />
+
+                <apex:column
+                    value="{!s.Class__c}"
+                    headerValue="Class" />
+
+                <apex:column
+                    value="{!s.Mobile__c}"
+                    headerValue="Mobile" />
+
+                <apex:column
+                    value="{!s.Email__c}"
+                    headerValue="Email" />
+
+                <!-- Edit Button -->
+                <apex:column headerValue="Edit">
+
+                    <apex:commandButton
+                        value="Edit"
+                        action="{!editStudent}"
+                        rerender="mainBlock,studentTable">
+
+                        <apex:param
+                            name="sid"
+                            value="{!s.Id}"
+                            assignTo="{!selectedStudentId}"
+                        />
+
+                    </apex:commandButton>
+
+                </apex:column>
+
+                <!-- Delete Button -->
+                <apex:column headerValue="Delete">
+
+                    <apex:commandButton
+                        value="Delete"
+                        action="{!deleteStudent}"
+                        rerender="mainBlock,studentTable">
+
+                        <apex:param
+                            name="sid"
+                            value="{!s.Id}"
+                            assignTo="{!selectedStudentId}"
+                        />
+
+                    </apex:commandButton>
+
+                </apex:column>
+
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>
