@@ -250,6 +250,7 @@ pm2 stop backend
 
 pm2 delete backend
 
+
 sudo nginx -t
 
 sudo systemctl restart nginx
@@ -258,4 +259,22 @@ sudo systemctl reload nginx
 
 sudo systemctl status nginx
 
+
 sudo tail -f /var/log/nginx/error.log
+
+#=================== Run deploy.sh  =================
+chmod +x deploy.sh
+./deploy.sh
+
+
+sudo lsof -i :5000
+pm2 status
+
+pm2 start index.js --name backend
+pm2 save
+
+
+pm2 restart backend
+sudo systemctl restart nginx
+
+
