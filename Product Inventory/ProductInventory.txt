@@ -1,0 +1,120 @@
+<apex:page controller="ProductInventoryController">
+
+    <apex:form >
+
+        <!-- DISPLAY MESSAGES -->
+        <apex:pageMessages />
+
+        <!-- PRODUCT FORM -->
+        <apex:pageBlock title="Product Inventory Management System"
+            id="mainBlock">
+
+            <apex:pageBlockSection title="Product Information"
+                columns="2">
+
+                <!-- PRODUCT NAME -->
+                <apex:inputField value="{!productObj.Name}"
+                />
+
+                <!-- SERIAL NUMBER -->
+                <apex:inputField value="{!productObj.Serial_No__c}"
+                />
+
+                <!-- MANUFACTURE DATE -->
+                <apex:inputField value="{!productObj.Manufacture_Date__c}"
+                />
+
+                <!-- EXPIRY DATE -->
+                <apex:inputField value="{!productObj.Expiry_Date__c}"
+                />
+
+            </apex:pageBlockSection>
+
+            <!-- BUTTONS -->
+            <apex:pageBlockButtons >
+
+                <!-- SAVE / UPDATE BUTTON -->
+                <apex:commandButton value="{!IF(isEdit,
+                                'Update Product',
+                                'Save Product')}"
+                    action="{!saveProduct}"
+                    rerender="mainBlock,productTable"
+                />
+
+                <!-- CANCEL BUTTON -->
+                <apex:commandButton value="Cancel"
+                    action="{!cancelEdit}"
+                    rendered="{!isEdit}"
+                    rerender="mainBlock"
+                />
+
+            </apex:pageBlockButtons>
+
+        </apex:pageBlock>
+
+        <!-- PRODUCT RECORD TABLE -->
+        <apex:pageBlock title="Product Records"
+            id="productTable">
+
+            <apex:pageBlockTable value="{!productList}"
+                var="p">
+
+                <!-- PRODUCT NAME -->
+                <apex:column value="{!p.Name}"
+                    headerValue="Product Name"
+                />
+
+                <!-- SERIAL NUMBER -->
+                <apex:column value="{!p.Serial_No__c}"
+                    headerValue="Serial No"
+                />
+
+                <!-- MANUFACTURE DATE -->
+                <apex:column value="{!p.Manufacture_Date__c}"
+                    headerValue="Manufacture Date"
+                />
+
+                <!-- EXPIRY DATE -->
+                <apex:column value="{!p.Expiry_Date__c}"
+                    headerValue="Expiry Date"
+                />
+
+                <!-- EDIT BUTTON -->
+                <apex:column headerValue="Edit">
+
+                    <apex:commandButton value="Edit"
+                        action="{!editProduct}"
+                        rerender="mainBlock,productTable">
+
+                        <apex:param name="pid"
+                            value="{!p.Id}"
+                            assignTo="{!selectedProductId}"
+                        />
+
+                    </apex:commandButton>
+
+                </apex:column>
+
+                <!-- DELETE BUTTON -->
+                <apex:column headerValue="Delete">
+
+                    <apex:commandButton value="Delete"
+                        action="{!deleteProduct}"
+                        rerender="mainBlock,productTable">
+
+                        <apex:param name="pid"
+                            value="{!p.Id}"
+                            assignTo="{!selectedProductId}"
+                        />
+
+                    </apex:commandButton>
+
+                </apex:column>
+
+            </apex:pageBlockTable>
+
+        </apex:pageBlock>
+
+    </apex:form>
+
+</apex:page>
