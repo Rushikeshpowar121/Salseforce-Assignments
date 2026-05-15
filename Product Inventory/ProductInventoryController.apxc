@@ -1,0 +1,164 @@
+public class ProductInventoryController {
+
+    // PRODUCT FORM OBJECT
+    public Product__c productObj { get; set; }
+
+    // PRODUCT RECORD LIST
+    public List<Product__c> productList { get; set; }
+
+    // EDIT MODE
+    public Boolean isEdit { get; set; }
+
+    // SELECTED PRODUCT ID
+    public Id selectedProductId { get; set; }
+
+    // CONSTRUCTOR
+    public ProductInventoryController() {
+
+        productObj = new Product__c();
+
+        isEdit = false;
+
+        getProducts();
+    }
+
+    // FETCH ALL PRODUCT RECORDS
+    public void getProducts() {
+
+        productList = [
+
+            SELECT Id,
+                   Name,
+                   Serial_No__c,
+                   Manufacture_Date__c,
+                   Expiry_Date__c
+            FROM Product__c
+            ORDER BY CreatedDate DESC
+
+        ];
+    }
+
+    // SAVE OR UPDATE PRODUCT
+    public PageReference saveProduct() {
+
+        try {
+
+            // VALIDATE DATES
+            if(
+                productObj.Expiry_Date__c <
+                productObj.Manufacture_Date__c
+            ) {
+
+                ApexPages.addMessage(
+
+                    new ApexPages.Message(
+                        ApexPages.Severity.ERROR,
+                        'Expiry Date cannot be before Manufacture Date.'
+                    )
+                );
+
+                return null;
+            }
+
+            // UPDATE PRODUCT
+            if(isEdit) {
+
+                update productObj;
+
+                ApexPages.addMessage(
+
+                    new ApexPages.Message(
+                        ApexPages.Severity.CONFIRM,
+                        'Product Updated Successfully!'
+                    )
+                );
+            }
+
+            // INSERT PRODUCT
+            else {
+
+                insert productObj;
+
+                ApexPages.addMessage(
+
+                    new ApexPages.Message(
+                        ApexPages.Severity.CONFIRM,
+                        'Product Added Successfully!'
+                    )
+                );
+            }
+
+            // RESET FORM
+            productObj = new Product__c();
+
+            isEdit = false;
+
+            // REFRESH TABLE
+            getProducts();
+        }
+        catch(Exception e) {
+
+            ApexPages.addMessage(
+
+                new ApexPages.Message(
+                    ApexPages.Severity.ERROR,
+                    e.getMessage()
+                )
+            );
+        }
+
+        return null;
+    }
+
+    // EDIT PRODUCT
+    public void editProduct() {
+
+        productObj = [
+
+            SELECT Id,
+                   Name,
+                   Serial_No__c,
+                   Manufacture_Date__c,
+                   Expiry_Date__c
+            FROM Product__c
+            WHERE Id = :selectedProductId
+            LIMIT 1
+
+        ];
+
+        isEdit = true;
+    }
+
+    // DELETE PRODUCT
+    public void deleteProduct() {
+
+        Product__c p = [
+
+            SELECT Id
+            FROM Product__c
+            WHERE Id = :selectedProductId
+            LIMIT 1
+
+        ];
+
+        delete p;
+
+        ApexPages.addMessage(
+
+            new ApexPages.Message(
+                ApexPages.Severity.CONFIRM,
+                'Product Deleted Successfully!'
+            )
+        );
+
+        getProducts();
+    }
+
+    // CANCEL EDIT
+    public void cancelEdit() {
+
+        productObj = new Product__c();
+
+        isEdit = false;
+    }
+}
