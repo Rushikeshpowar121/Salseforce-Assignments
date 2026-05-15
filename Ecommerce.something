@@ -1,0 +1,261 @@
+# ================================
+# CONNECT TO EC2
+# ================================
+
+chmod 400 key.pem
+
+ssh -i key.pem ubuntu@YOUR_EC2_PUBLIC_IP
+
+
+# ================================
+# UPDATE SERVER
+# ================================
+
+sudo apt update && sudo apt upgrade -y
+
+
+# ================================
+# INSTALL NODE.JS + REQUIRED TOOLS
+# ================================
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+
+sudo apt install -y nodejs git nginx
+
+sudo npm install -g pm2
+
+
+# ================================
+# VERIFY INSTALLATIONS
+# ================================
+
+node -v
+npm -v
+git --version
+nginx -v
+pm2 -v
+
+
+# ================================
+# CLONE PROJECT
+# ================================
+
+cd ~
+
+git clone https://github.com/Pratham-ghadge/E-Commerce.git
+
+cd E-Commerce
+
+
+# ================================
+# BACKEND SETUP
+# ================================
+
+cd backend
+
+npm install
+
+# IF ERROR:
+# npm install --legacy-peer-deps
+
+
+# ================================
+# EDIT BACKEND .ENV
+# ================================
+
+nano .env
+
+# CHANGE:
+# FRONTEND_URL=http://YOUR_EC2_PUBLIC_IP
+
+
+# ================================
+# TEST BACKEND
+# ================================
+
+npm run dev
+
+# STOP:
+# CTRL + C
+
+
+# ================================
+# START BACKEND USING PM2
+# ================================
+
+pm2 start index.js --name backend
+
+pm2 save
+
+pm2 startup
+
+# COPY & RUN THE COMMAND GIVEN BY PM2
+
+pm2 save
+
+
+# ================================
+# CHECK BACKEND STATUS
+# ================================
+
+pm2 status
+
+pm2 logs backend
+
+
+# ================================
+# FRONTEND SETUP
+# ================================
+
+cd ../frontend
+
+npm install
+
+
+# ================================
+# FIND LOCALHOST USAGE
+# ================================
+
+grep -R "localhost:5000" .
+
+# REPLACE:
+# http://localhost:5000
+#
+# WITH:
+# http://YOUR_EC2_PUBLIC_IP
+
+
+# ================================
+# BUILD FRONTEND
+# ================================
+
+npm run build
+
+
+# ================================
+# VERIFY BUILD
+# ================================
+
+ls dist
+
+
+# ================================
+# FIX PERMISSIONS
+# ================================
+
+sudo chmod 755 /home/ubuntu
+
+sudo chmod -R 755 /home/ubuntu/E-Commerce/frontend/dist
+
+
+# ================================
+# CREATE NGINX CONFIG
+# ================================
+
+sudo nano /etc/nginx/sites-available/ecommerce
+
+
+# ================================
+# PASTE THIS NGINX CONFIG
+# ================================
+
+server {
+    listen 80;
+
+    server_name YOUR_EC2_PUBLIC_IP;
+
+    root /home/ubuntu/E-Commerce/frontend/dist;
+
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api {
+        proxy_pass http://localhost:5000;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Upgrade $http_upgrade;
+
+        proxy_set_header Connection 'upgrade';
+
+        proxy_set_header Host $host;
+
+        proxy_set_header X-Real-IP $remote_addr;
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+
+# ================================
+# ENABLE NGINX CONFIG
+# ================================
+
+sudo rm -f /etc/nginx/sites-enabled/default
+
+sudo ln -s /etc/nginx/sites-available/ecommerce /etc/nginx/sites-enabled/
+
+
+# ================================
+# TEST & RESTART NGINX
+# ================================
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+
+sudo systemctl reload nginx
+
+sudo systemctl enable nginx
+
+
+# ================================
+# CHECK NGINX STATUS
+# ================================
+
+sudo systemctl status nginx
+
+
+# ================================
+# VERIFY BACKEND PORT
+# ================================
+
+sudo lsof -i :5000
+
+
+# ================================
+# FINAL WEBSITE
+# ================================
+
+# OPEN IN BROWSER:
+# http://YOUR_EC2_PUBLIC_IP
+
+
+# ================================
+# USEFUL COMMANDS
+# ================================
+
+pm2 status
+
+pm2 logs
+
+pm2 restart backend
+
+pm2 stop backend
+
+pm2 delete backend
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+
+sudo systemctl reload nginx
+
+sudo systemctl status nginx
+
+sudo tail -f /var/log/nginx/error.log
