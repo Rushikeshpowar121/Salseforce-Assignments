@@ -1,0 +1,190 @@
+Salesforce LP2 Practicals (5-8) - Corrected Codes
+5. Employee Console Program
+Custom Object: Employee__c
+Required Fields
+• Emp_ID__c → Number
+• Emp_Name__c → Text
+• Email__c → Email
+• Birth_Date__c → Date
+• Department__c → Picklist/Text
+Apex Class: EmployeeConsoleDemo
+public class EmployeeConsoleDemo {
+ public static void runDemo(){
+ Employee__c emp = new Employee__c(
+ Emp_ID__c = 101,
+ Emp_Name__c = 'JM',
+ Email__c = 'jm@gmail.com',
+ Birth_Date__c = Date.newInstance(2005, 1, 10),
+ Department__c = 'IT'
+ );
+ insert emp;
+ System.debug('Employee inserted successfully');
+ List<Employee__c> empList = [
+ SELECT Emp_ID__c,
+ Emp_Name__c,
+ Email__c,
+ Birth_Date__c,
+ Department__c
+ FROM Employee__c
+ ];
+ System.debug('--- Employee Records ---');
+ for(Employee__c e : empList){
+ System.debug(
+ e.Emp_Name__c + ' | ' +
+ e.Emp_ID__c + ' | ' +
+ e.Email__c + ' | ' +
+ e.Department__c
+ );
+ }
+ }
+}
+Execute Anonymous:
+EmployeeConsoleDemo.runDemo();
+Expected Output:
+Employee inserted successfully
+JM | 101 | jm@gmail.com | IT
+6. Bank Account System
+Custom Object: Customer__c
+Required Fields
+• Emp_ID__c → Number
+• Emp_Name__c → Text
+• Email__c → Email
+• Birth_Date__c → Date
+• Department__c → Picklist/Text
+Apex Class: BankConsoleDemo
+public class BankConsoleDemo {
+ public static void runDemo(){
+ Customer__c cust = new Customer__c(
+ Name = 'John',
+ Emp_ID__c = 201,
+ Emp_Name__c = 'John Doe',
+ Email__c = 'john@test.com',
+ Birth_Date__c = Date.newInstance(1999, 5, 10),
+ Department__c = 'Finance'
+ );
+ insert cust;
+ System.debug('Customer inserted successfully');
+ List<Customer__c> custList = [
+ SELECT Name,
+ Emp_ID__c,
+ Emp_Name__c,
+ Email__c,
+ Birth_Date__c,
+ Department__c
+ FROM Customer__c
+ ];
+ System.debug('--- Customer Records ---');
+ for(Customer__c c : custList){
+ System.debug(
+ c.Emp_Name__c + ' | ' +
+ c.Emp_ID__c + ' | ' +
+ c.Email__c + ' | ' +
+ c.Department__c
+ );
+ }
+ }
+}
+Execute Anonymous:
+BankConsoleDemo.runDemo();
+Expected Output:
+Customer inserted successfully
+John Doe | 201 | john@test.com | Finance
+7. Email Console Program
+Apex Class: EmailConsoleDemo
+public class EmailConsoleDemo {
+ public static void runDemo(){
+ Messaging.SingleEmailMessage mail =
+ new Messaging.SingleEmailMessage();
+ mail.setToAddresses(
+ new String[] {'test@gmail.com'}
+ );
+ mail.setSubject('Test Email from Salesforce');
+ mail.setPlainTextBody(
+ 'Hello JM, this is a test email from Apex Console 
+Program.'
+ );
+ Messaging.sendEmail(
+ new Messaging.SingleEmailMessage[] {mail}
+ );
+ System.debug('Email sent successfully');
+ }
+}
+Execute Anonymous:
+EmailConsoleDemo.runDemo();
+Expected Output:
+Email sent successfully
+8. Lightning Application Creation Steps
+Step 1: Create Custom Object
+Go to:
+Setup → Object Manager → Create → Custom Object
+Example:
+Employee__c
+--------------------------------------------------
+Step 2: Create Required Fields
+Go to:
+Object Manager → Employee__c → Fields & Relationships → New
+Create fields:
+• Emp_ID__c
+• Emp_Name__c
+• Email__c
+• Salary__c
+• Department__c
+• Joining_Date__c
+--------------------------------------------------
+Step 3: Add Validation Rules
+Go to:
+Object Manager → Validation Rules → New
+Validation Examples:
+1. Employee Name Validation
+LEN(Emp_Name__c) < 3
+2. Salary Validation
+Salary__c < 10000 || Salary__c > 500000
+3. Email Validation
+NOT(CONTAINS(Email__c, "@"))
+4. Joining Date Validation
+Joining_Date__c > TODAY()
+5. Employee ID Validation
+Emp_ID__c <= 0
+--------------------------------------------------
+Step 4: Create Custom Tab
+Go to:
+Setup → Tabs → New Custom Object Tab
+Select:
+Employee__c
+Choose any tab style/icon.
+--------------------------------------------------
+Step 5: Create Lightning App
+Go to:
+Setup → App Manager → New Lightning App
+Fill:
+• App Name
+• Description
+• Logo (optional)
+--------------------------------------------------
+Step 6: Add Navigation Items
+Add:
+• Employee Object
+• Reports
+• Dashboard
+--------------------------------------------------
+Step 7: Assign User Profiles
+Add:
+• System Administrator
+--------------------------------------------------
+Step 8: Open Lightning App
+Go to:
+App Launcher (9 dots)
+Search:
+Employee App
+--------------------------------------------------
+Important Viva Questions
+1. What is a Lightning App?
+A Lightning App is used to organize objects, tabs, and pages in 
+Salesforce.
+2. What is a Validation Rule?
+Validation rules prevent invalid data from getting saved.
+3. What is a Custom Object?
+A custom object is a user-defined database table in Salesforce.
+4. Difference between Visualforce and Lightning?
+Visualforce is page-based while Lightning is component-based and 
+modern.
