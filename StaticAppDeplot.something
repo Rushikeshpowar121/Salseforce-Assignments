@@ -1,0 +1,26 @@
+ssh -i my-key.pem ubuntu@PUBLIC_IP
+
+sudo apt update -y
+sudo apt install nginx git -y
+
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+git clone https://github.com/USERNAME/REPO_NAME.git
+
+sudo rm -rf /var/www/html/* 
+sudo cp -r REPO_NAME/* /var/www/html/
+
+sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 755 /var/www/html
+
+sudo systemctl restart nginx
+
+http://PUBLIC_IP
+
+Optional) Auto-update from GitHub (future push sync)
+
+If you want updates automatically:
+
+cd /var/www/html
+git pull origin main
