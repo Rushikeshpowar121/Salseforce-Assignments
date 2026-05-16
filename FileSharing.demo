@@ -1,0 +1,154 @@
+
+====================================================
+FILE SHARING BETWEEN TWO VMs
+(USING PEM KEY)
+====================================================
+
+
+====================================================
+STEP 1 — LOGIN TO FIRST VM USING PEM KEY
+====================================================
+
+Give permission to key:
+
+chmod 400 vm_key.pem
+
+
+Login:
+
+ssh -i vm_key.pem azureuser@VM1_PUBLIC_IP
+
+
+Example:
+
+ssh -i vm_key.pem azureuser@20.244.10.100
+
+
+====================================================
+STEP 2 — LOGIN TO SECOND VM USING PEM KEY
+====================================================
+
+Open another terminal
+
+Run:
+
+ssh -i vm_key.pem azureuser@VM2_PUBLIC_IP
+
+
+Example:
+
+ssh -i vm_key.pem azureuser@20.244.10.101
+
+
+====================================================
+STEP 3 — TRANSFER PEM KEY TO SENDER VM
+====================================================
+
+Run from LOCAL MACHINE:
+
+scp -i vm_key.pem vm_key.pem azureuser@VM1_PUBLIC_IP:/home/azureuser/
+
+
+Example:
+
+scp -i vm_key.pem vm_key.pem azureuser@20.244.10.100:/home/azureuser/
+
+
+====================================================
+STEP 4 — GIVE PERMISSION TO KEY INSIDE VM1
+====================================================
+
+Login to VM1
+
+Run:
+
+chmod 400 vm_key.pem
+
+
+====================================================
+STEP 5 — CREATE FILE IN VM1
+====================================================
+
+Run:
+
+nano demo.txt
+
+
+Write anything inside file
+
+Example:
+
+Hello From VM1
+
+
+Save:
+
+CTRL + X
+Press Y
+Press ENTER
+
+
+====================================================
+STEP 6 — SEND FILE USING PEM KEY
+====================================================
+
+Run on VM1:
+
+scp -i vm_key.pem demo.txt azureuser@VM2_PUBLIC_IP:/home/azureuser/
+
+
+Example:
+
+scp -i vm_key.pem demo.txt azureuser@20.244.10.101:/home/azureuser/
+
+
+====================================================
+STEP 7 — VERIFY FILE ON VM2
+====================================================
+
+Go to VM2
+
+Run:
+
+ls
+
+
+You will get:
+
+demo.txt
+
+
+Open file:
+
+cat demo.txt
+
+
+====================================================
+IF ERROR COMES
+====================================================
+
+1. Permission denied
+
+Run:
+
+chmod 400 vm_key.pem
+
+
+2. File not sending
+
+Run:
+
+chmod 777 demo.txt
+
+
+3. SSH failed
+
+Check:
+- Correct VM IP
+- Correct key
+- Same network
+
+
+====================================================
+COMPLETED
+====================================================
